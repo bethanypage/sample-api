@@ -4,11 +4,8 @@ import router from "./routes/api"
 
 //TODO
 /*
-- Check client CRUD
 - All job CRUD
 - fix mess
-- connection string???
-
 */
 
 //fix issues
