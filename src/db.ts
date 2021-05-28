@@ -1,5 +1,4 @@
 import { Pool } from "pg";
-//import { Client } from "pg";
 
 //Connection strings usually have the format:
 //postgres://username:password@host:port
@@ -21,7 +20,6 @@ const connectionString = process.env.DB_CONN ?? 'postgres://postgres:postgres@lo
 export const pool = new Pool(
 {
     connectionString
-    //replace with connection string ayo?
    /* user: "postgres",
     password: 'postgres',
     database: 'postgres',
@@ -29,20 +27,4 @@ export const pool = new Pool(
     port: 5432 //standard postgresql port
 */
 });
-
-
-//For later use when potentially creating a db. 
-//swap pool and client - client for intial conneciton, pool for new db connection
-/*export const client = new Client(
-    {
-        //replace with connection string ayo?
-        user: "postgres",
-        password: 'postgres',
-        database: 'simple-api',
-        host: "localhost",
-        port: 5432 //standard postgresql port
-    
-    });*/
-
-
 

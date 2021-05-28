@@ -12,17 +12,46 @@ Sample api that exposes GET, POST and PUT endpoints for updating clients and job
 ```
 #### Read/Get
 ```
-{
-  "id" : "exampleId"
-}
+ *ID as param
 ```
 
 #### Update/Put
 ```
 {
-  "id" : "exampleId",
   "cName": "exampleName"
 }
+ * + ID as param
+```
+#### Delete
+Not Implemented
+
+
+### Job Endpoints Input Formats
+
+#### Create/Post
+```
+{
+  "clientID" : "1",
+  "jobType" : "example jobType",
+  "startDate" : "YYYY-MM-DD",
+  "endDate" : "YYYY-MM-DD"
+}
+```
+#### Read/Get
+```
+* ID as param
+```
+
+#### Update/Put
+```
+{
+  "clientID" : "1",
+  "jobType" : "example jobType",
+  "startDate" : "YYYY-MM-DD",
+  "endDate" : "YYYY-MM-DD"
+}
+
+* + ID as param
 ```
 #### Delete
 Not Implemented
