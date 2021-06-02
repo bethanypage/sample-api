@@ -35,8 +35,11 @@ router.post('/client', async (req,res) => {
     //console.log("POST");
     var cName = req.body.cName; 
     console.log(cName);
-    await pool.query("INSERT INTO Clients (cname) VALUES ($1) RETURNING *", [cName]);
-    res.send("Successly added");
+    const clients = await pool.query("INSERT INTO Clients (cname) VALUES ($1) RETURNING *", [cName]);
+    var th = clients.rows[0];
+    console.log(th);
+    res.json(clients.rows[0]);
+
     
     }catch(e) {
         console.error(e.message);
@@ -111,4 +114,4 @@ router.put('/jobs/:id', async (req,res) => {
 })
 //Delete
 
-export = router 
+export default router 
