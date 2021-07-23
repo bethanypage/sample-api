@@ -1,32 +1,30 @@
 import express from 'express';
-import router from "./routes/api" 
-import {pool} from "./db"
-    
-//fix issues
+import {initRoutes} from "./routes/api" 
+import {getConnection} from "./db";
+
+const client = getConnection();
 
 export function initExpressApp():express.Application{
 
     const app = express();   
-    
-    app.use('/api', router);
+    app.use('/api', initRoutes());
     app.use(express.json);
 
     process.on('exit', code => {
         console.log(`Application exiting with code ${code}`);
-      });
+    });
   
-  process.once('SIGINT', () => systemShutdown('SIGINT'));
-  process.once('SIGTERM', () => systemShutdown('SIGTERM'));
+    process.once('SIGINT', () => systemShutdown('SIGINT'));
+    process.once('SIGTERM', () => systemShutdown('SIGTERM'));
     return app;
 }
 
 export async function systemShutdown(code?: string): Promise<any> {
     if (code) console.log((`${code} event reached. Application closing.`));
     else console.log((`Application closing.`));
-  
     try {
         //.close() -> .end()
-      await pool.end();
+      await client.end();
       process.exit(0);
     } catch (err) {
       console.log(err.toString());

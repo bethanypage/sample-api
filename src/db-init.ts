@@ -1,13 +1,22 @@
-// TODO: create a one off script here that uses `pg` to load schema.sql and run it against the database
-import {pool} from './db';
+import {Pool} from 'pg';
 import fs from 'fs'; 
 
-pool.connect();
+const connectionString = process.env.DB_CONN ?? 'postgres://postgres:postgres@localhost:5432';
 
-const dbScript = fs.readFileSync('src/schema.sql').toString();
-pool.query(dbScript, (err, res) => 
+
+async function main()
 {
-    if (err) throw err
-    console.log(res);
-});
+    const pool = new Pool({connectionString});
+    const client = await pool.connect();
 
+    const dbScript = fs.readFileSync('src/schema.sql').toString();
+
+    const response = await client.query(dbScript)
+
+    client.release();
+    await pool.end();
+    console.log("pool closed");
+}
+
+main()
+.catch(console.error)
