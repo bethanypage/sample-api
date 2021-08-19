@@ -42,6 +42,10 @@
       "appenders": ["common"],
       "level": "info"
     },
+    "cs:shutdown": {
+      "appenders": ["common"],
+      "level": "info"
+    },
     "cs:api": {
       "appenders": ["express"],
       "level": "debug"

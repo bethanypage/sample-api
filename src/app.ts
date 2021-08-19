@@ -1,41 +1,78 @@
+import type { Server } from 'http';
+import type { Pool } from 'pg';
+
+import CSLogger, { Logger } from '@cloudsense/cs-logger';
 import express from 'express';
-//import { initRoutes } from './routes/api';
-import { getPool } from './db';
-import { Pool } from 'pg';
+
 import log4js from './log4js.json';
-import CSLogger from '@cloudsense/cs-logger';
+
+import { getPool } from './db';
+import { initRoutes } from './routes/api';
+import { errorHandlingMiddleware } from './middleware';
 
 CSLogger.configure(log4js);
-let pool: Pool;
 
-export async function initExpressApp(): Promise<express.Application> {
+const port = process.env.PORT ?? 3000;
+
+let pool: Pool;
+let server: Server;
+
+export function initExpressApp() {
   const app = express();
+
   pool = getPool();
 
-  app.use(express.json);
+  app.use(express.json());
   app.use(CSLogger.initCsExpressLogging());
-  //app.use('/api', initRoutes());
-  app.get('/', (req, res) => {
-    res.send({ message: 'OK' });
-  });
-  process.on('exit', (code) => {
-    console.log(`Application exiting with code ${code}`);
-  });
 
-  process.once('SIGINT', () => systemShutdown('SIGINT'));
-  process.once('SIGTERM', () => systemShutdown('SIGTERM'));
+  app.use('/api', initRoutes());
+
+  app.use(errorHandlingMiddleware());
+
+  attachShutdownHandles();
+
   return app;
 }
 
-export async function systemShutdown(code?: string): Promise<any> {
-  if (code) console.log(`${code} event reached. Application closing.`);
-  else console.log(`Application closing.`);
+export async function startupSystem(): Promise<void> {
+  const logger = CSLogger.getLogger('cs:startup');
+
+  server = initExpressApp().listen(port, () => {
+    logger.info(`Listening on port: ${port}`);
+  });
+}
+
+function attachShutdownHandles() {
+  const logger = CSLogger.getLogger('cs:shutdown');
+
+  process.on('exit', (code) => {
+    logger.info(`Application exiting with code ${code}`);
+  });
+
+  process.once('SIGINT', () => systemShutdown(logger, 'SIGINT'));
+  process.once('SIGTERM', () => systemShutdown(logger, 'SIGTERM'));
+}
+
+export async function systemShutdown(logger: Logger, code?: string): Promise<any> {
+  if (code) logger.warn(`${code} event reached. Application closing.`);
+  else logger.warn(`Application closing.`);
+
+  function stopServer() {
+    return new Promise<void>((resolve, reject) => {
+      server.close((err) => {
+        if (err) return reject(err);
+        resolve();
+      });
+    });
+  }
+
   try {
     //.close() -> .end()
-    await pool.end();
+    await Promise.all([pool.end(), stopServer()]);
+
     process.exit(0);
   } catch (err) {
-    console.log(err.toString());
+    logger.error(err);
     process.exit(1);
   }
 }
