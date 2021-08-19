@@ -4,7 +4,7 @@
   "description": "Sample api for postgreSQL",
   "main": "app.js",
   "scripts": {
-    "dev": "nodemon --watch '/src/**' --exec \"ts-node\" src/server.ts",
+    "dev": "nodemon",
     "build": "tsc",
     "test": "jest",
     "start": "node dist/server.js",
@@ -37,16 +37,18 @@
     "nodemon": "^2.0.7",
     "prettier": "2.3.0",
     "supertest": ">=6.1.x",
+    "testcontainers": "^7.18.1",
     "ts-jest": ">=26.5.x",
     "ts-node": ">=8.10.x",
     "typescript": ">=4.2.x"
   },
   "dependencies": {
+    "@cloudsense/cs-logger": "^4.0.1",
     "express": "^4.17.1",
     "pg": "^8.6.0"
   },
   "jest": {
     "preset": "ts-jest",
-    "testTimeout": 20000
+    "testTimeout": 30000
   }
 }

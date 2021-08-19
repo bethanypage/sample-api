@@ -1,0 +1,54 @@
+{
+  "disableClustering": true,
+  "appenders": {
+    "common": {
+      "type": "console",
+      "layout": {
+        "type": "csPattern",
+        "pattern": "[%[---%]] %d{ABSOLUTE} %X{r} (%z) %l{fgLevel,boldOn} %p %l{fgDefault,boldOff} %l{fgCyan}%c%l{fgDefault} %m",
+        "maxLineLength": 9000,
+        "patternOtherLines": "[%[---%]] "
+      }
+    },
+    "express-response": {
+      "type": "console",
+      "layout": {
+        "type": "csPattern",
+        "pattern": "[%[%X{correlationId}%]] %d{ABSOLUTE} %X{r} (%z) %l{fgYellow}%X{org-id}%l{fgDefault} %X{remote-addr} %l{fgMagenta} %X{method} %l{fgDefault} %X{url} %X{status} \"%X{user-agent}\" %l{fgLevel,boldOn} %p %l{fgDefault,boldOff} %l{fgCyan}%c%l{fgDefault} %m",
+        "patternOtherLines": "[%[%X{correlationId}%]] ",
+        "maxLineLength": 9000
+      }
+    },
+    "express": {
+      "type": "console",
+      "layout": {
+        "type": "csPattern",
+        "pattern": "[%[%X{correlationId}%]] %d{ABSOLUTE} %X{r} (%z) %l{fgYellow}%X{org-id}%l{fgDefault} %X{remote-addr} %l{fgMagenta} %X{method} %l{fgDefault} %X{url} \"%X{user-agent}\" %l{fgLevel,boldOn} %p %l{fgDefault,boldOff} %l{fgCyan}%c%l{fgDefault} %m",
+        "patternOtherLines": "[%[%X{correlationId}%]] ",
+        "maxLineLength": 9000
+      }
+    }
+  },
+  "categories": {
+    "default": {
+      "appenders": ["common"],
+      "level": "all"
+    },
+    "cs:response.onFinish": {
+      "appenders": ["express-response"],
+      "level": "info"
+    },
+    "cs:startup": {
+      "appenders": ["common"],
+      "level": "info"
+    },
+    "cs:api": {
+      "appenders": ["express"],
+      "level": "debug"
+    },
+    "cs:security": {
+      "appenders": ["express"],
+      "level": "debug"
+    }
+  }
+}

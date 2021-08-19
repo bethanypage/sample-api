@@ -1,13 +1,19 @@
-import { Client } from "pg";
+//import { Client } from 'pg';
+import { Pool, PoolClient } from 'pg';
 
-let client: Client 
+let pool: Pool;
+//let client: Client;
 const connectionString = process.env.DB_CONN ?? 'postgres://postgres:postgres@localhost:5432';
 
-export function getConnection():Client{
-    
-    if (client){
-        return client;
-    }
-    client = new Client({connectionString});
-    return client;
+//export const pool = new Pool({ connectionString });
+export function getPool() {
+  if (pool) {
+    return pool;
+  } else {
+    pool = new Pool({ connectionString });
+    return pool;
+  }
+}
+export function getConnection(): Promise<PoolClient> {
+  return pool.connect();
 }

@@ -8,7 +8,6 @@ async function main()
 {
     const pool = new Pool({connectionString});
     const client = await pool.connect();
-
     const dbScript = fs.readFileSync('src/schema.sql').toString();
 
     const response = await client.query(dbScript)
