@@ -29,11 +29,19 @@ function getConnectionString(container: StartedPostgreSqlContainer) {
 async function seedData(pool: Pool) {
   logger.debug('Seeding test database');
 
+  //Creating database
   const dbScript = await fs.readFile(DB_SEED);
   logger.debug(`Loaded ${DB_SEED}`);
 
   await pool.query(dbScript.toString());
   logger.debug(`DB seed success.`);
+
+  //Adding test data
+  await pool.query("INSERT INTO Clients (cName) VALUES ('test name')  RETURNING *");
+  await pool.query("INSERT INTO Jobs (clientID,jobType,startDate,endDate) VALUES (1,'test one',$1,$2) RETURNING *", [
+    startDate,
+    endDate,
+  ]);
 }
 
 //called once before
@@ -64,23 +72,73 @@ afterAll(async () => {
 });
 
 describe('Clients', () => {
-  // it('POST / - Add New Client', async () => {
-  //   const request = supertest(app);
-  //   const response = await request.post('/api/client').send({ cName: 'Inserted Name' });
-  //   expect(response.statusCode).toBe(200);
-  //   console.log('post/ finished');
-  // });
+  it('POST / - Add New Client', async () => {
+    const request = supertest(app);
+    const response = await request.post('/api/client').send({ cName: 'Inserted Name' });
+    expect(response.statusCode).toBe(200);
+    //console.log('post/ finished');
+  });
 
   it('GET / - Return all Clients', async () => {
     const request = supertest(app);
     const response = await request.get('/api/client');
 
     logger.debug('clients response:', { status: response.statusCode, headers: response.headers, payload: response.body });
-    // expect(response.statusCode).toBe(200);
-    // console.log(response.statusCode);
-    // // expect(response.body.length).toBe(2);
-    // //expect(response.body[1].id).toBe(2);
-    // //expect(response.body[1].cname).toBe('Inserted Name');
-    // //console.log(response.body[1].cname);
+    expect(response.statusCode).toBe(200);
+    expect(response.body.length).toBe(2);
+    expect(response.body[1].id).toBe(2);
+    expect(response.body[1].cname).toBe('Inserted Name');
+  });
+  it('PUT / - Update one Client', async () => {
+    const request = supertest(app);
+    const response = await request.put('/api/client/1').send({ cName: 'Updated Name' });
+    expect(response.statusCode).toBe(200);
+    expect(response.body.id).toBe(1);
+    expect(response.body.cname).toBe('Updated Name');
+  });
+  it('GET / - Return one Client', async () => {
+    const request = supertest(app);
+    const response = await request.get('/api/client/2');
+    expect(response.statusCode).toBe(200);
+    expect(response.body.id).toBe(2);
+    expect(response.body.cname).toBe('Inserted Name');
+  });
+});
+
+describe('Jobs', () => {
+  it('POST / - Add New Job', async () => {
+    const request = supertest(app);
+    const response = await request.post('/api/jobs').send({
+      clientID: '1',
+      jobType: 'insertedJob',
+      startDate: '2017-12-12',
+      endDate: '2018-12-12',
+    });
+    expect(response.statusCode).toBe(200);
+  });
+  it('GET / - Return all Jobs', async () => {
+    const request = supertest(app);
+    const response = await request.get('/api/jobs');
+    expect(response.statusCode).toBe(200);
+    expect(response.body.length).toBe(2);
+  });
+  it('PUT / - Update one Job', async () => {
+    const sDate = new Date(2019 - 12 - 12);
+    const eDate = new Date(2021 - 12 - 12);
+    const request = supertest(app);
+    const response = await request.put('/api/jobs/1').send({
+      clientID: '2',
+      jobType: 'updatedJob',
+      startDate: '2017-12-12',
+      endDate: '2018-12-12',
+    });
+    expect(response.statusCode).toBe(200);
+  });
+  it('GET / - Return one Job', async () => {
+    const request = supertest(app);
+    const response = await request.get('/api/jobs/1');
+    expect(response.statusCode).toBe(200);
+    expect(response.body.id).toBe(1);
+    expect(response.body.jobtype).toBe('updatedJob');
   });
 });

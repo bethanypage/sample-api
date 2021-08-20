@@ -3,24 +3,20 @@ import { getPool } from '../db';
 
 export function initRoutes() {
   const pool = getPool();
-  //const client = getConnection();
   const router = express.Router();
-
-  //router.use(express.json());
 
   //--------------------Client-------------------
   // Read all clients
   router.get('/client', async (req, res, next) => {
     try {
       const logger = req.locals.getLogger('cs:api');
-      logger.info('Anything');
+      //logger.info('Anything');
       const result = await pool.query('SELECT * FROM clients');
 
       res.json(result.rows);
     } catch (e) {
       next(e);
     }
-    //await client.end();
   });
   //Read one client
   router.get('/client/:id', async (req, res) => {
@@ -31,7 +27,6 @@ export function initRoutes() {
     } catch (e) {
       console.error(e.message);
     }
-    // await client.end();
   });
   //Add new Client
   router.post('/client', async (req, res) => {
@@ -42,8 +37,6 @@ export function initRoutes() {
     } catch (e) {
       console.error(e.message);
     }
-
-    // await client.end();
   });
   //Update Client
   router.put('/client/:id', async (req, res) => {
@@ -56,7 +49,6 @@ export function initRoutes() {
     } catch (e) {
       console.error(e.message);
     }
-    // await client.end();
   });
   //Delete
 
@@ -69,7 +61,6 @@ export function initRoutes() {
     } catch (e) {
       console.error(e.message);
     }
-    //await client.end();
   });
 
   //Read one job
@@ -81,7 +72,6 @@ export function initRoutes() {
     } catch (e) {
       console.error(e.message);
     }
-    // await client.end();
   });
 
   //Add new job
@@ -101,7 +91,6 @@ export function initRoutes() {
     } catch (e) {
       console.error(e.message);
     }
-    //await client.end();
   });
   //Update job
   router.put('/jobs/:id', async (req, res) => {
@@ -122,7 +111,6 @@ export function initRoutes() {
     } catch (e) {
       console.error(e.message);
     }
-    //await client.end();
   });
   //Delete
   return router;
