@@ -1,11 +1,9 @@
-import CSLogger from '@cloudsense/cs-logger';
+import Logger from 'pino';
 import throng from 'throng';
-import log4js from './log4js.json';
 
 import { startupSystem } from './app';
 
-CSLogger.configure(log4js);
-const logger = CSLogger.getLogger('cs:startup');
+const logger = Logger();
 
 const throngOptions = {
   workers: process.env.WEB_CONCURRENCY ?? 1,

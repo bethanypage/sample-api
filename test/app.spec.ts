@@ -1,5 +1,4 @@
-import CSLogger from '@cloudsense/cs-logger';
-import log4js from '../src/log4js.json';
+import Logger from 'pino';
 
 import path from 'path';
 import { promises as fs } from 'fs';
@@ -12,9 +11,7 @@ import { PostgreSqlContainer, StartedPostgreSqlContainer } from 'testcontainers'
 //Test constants
 const DB_SEED = path.resolve(__dirname, '..', 'scripts', 'init.sql');
 
-CSLogger.configure(log4js);
-const logger = CSLogger.getLogger('cs:test');
-
+const logger = Logger();
 const startDate = new Date(2020 - 12 - 12);
 const endDate = new Date();
 
@@ -76,7 +73,6 @@ describe('Clients', () => {
     const request = supertest(app);
     const response = await request.post('/api/client').send({ cName: 'Inserted Name' });
     expect(response.statusCode).toBe(200);
-    //console.log('post/ finished');
   });
 
   it('GET / - Return all Clients', async () => {
