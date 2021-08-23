@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "nodemon -e ts,json",
     "build": "tsc",
-    "test": "jest",
+    "test": "jest --colors | pino-pretty -c -t",
     "start": "node dist/server.js",
     "db:start": "docker run --name some-postgres --rm -e POSTGRES_PASSWORD=postgres -p 5432:5432 -d postgres",
     "db:stop": "docker stop some-postgres",
@@ -33,12 +33,14 @@
     "@types/jest": ">=26.0.x",
     "@types/node": ">=14.14.x",
     "@types/pg": "^8.6.0",
+    "@types/pino": "^6.3.11",
     "@types/supertest": ">=2.x",
     "@types/throng": "^5.0.2",
     "@types/uuid": "^8.3.1",
     "jest": ">=26.5.x",
     "nodemon": "^2.0.7",
-    "prettier": "2.3.0",
+    "pino-pretty": "^6.0.0",
+    "prettier": "^2.3.2",
     "supertest": ">=6.1.x",
     "testcontainers": "^7.18.1",
     "ts-jest": ">=26.5.x",
@@ -46,13 +48,12 @@
     "typescript": ">=4.2.x"
   },
   "dependencies": {
-    "@cloudsense/cs-logger": "^4.0.1",
-    "@types/pino": "^6.3.11",
     "express": "^4.17.1",
     "express-pino-logger": "^6.0.0",
     "pg": "^8.6.0",
     "pino": "^6.13.0",
-    "throng": "^5.0.0"
+    "throng": "^5.0.0",
+    "uuid": "^8.3.2"
   },
   "jest": {
     "preset": "ts-jest",
